@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Charistar",
+    "slug": "charistar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "charistar",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FAF8F3"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.charistar.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1B5E3B",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.charistar.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "name": "Charistar",
+      "shortName": "Charistar",
+      "description": "Premium yogurt, parfait & healthy snacks — delivered fresh across Nigeria.",
+      "themeColor": "#1B5E3B",
+      "backgroundColor": "#FAF8F3",
+      "display": "standalone",
+      "orientation": "portrait",
+      "lang": "en",
+      "output": "dist"
+    },
+    "plugins": ["expo-router"]
+  }
+}
