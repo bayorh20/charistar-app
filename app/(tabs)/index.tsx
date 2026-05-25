@@ -17,7 +17,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { ProductCard } from '../../components/ProductCard';
 import { SectionHeader } from '../../components/SectionHeader';
@@ -25,6 +24,7 @@ import { CATEGORIES, getProductsBySection, ProductSection } from '../../constant
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useRewardsStore } from '../../store/useRewardsStore';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 const SECTIONS: { key: ProductSection; title: string; href: string }[] = [
@@ -36,8 +36,8 @@ const SECTIONS: { key: ProductSection; title: string; href: string }[] = [
 ];
 
 export default function HomeScreen() {
-  const insets = useSafeAreaInsets();
-  const { isDesktopWeb, isTabletWeb, contentPaddingBottom } = useWebLayout();
+  const { scrollPaddingBottom } = useScreenInsets();
+  const { isDesktopWeb, isTabletWeb } = useWebLayout();
   const user = useAuthStore((s) => s.user);
   const points = useRewardsStore((s) => s.points);
   const heroY = useSharedValue(0);
@@ -58,10 +58,11 @@ export default function HomeScreen() {
   }));
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: contentPaddingBottom }}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
+        style={styles.scroll}
       >
         <View style={styles.topBar}>
           <View>
@@ -170,7 +171,8 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1 },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',

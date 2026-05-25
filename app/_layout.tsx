@@ -1,7 +1,9 @@
 import { Stack, usePathname } from 'expo-router';
+import type { ReactNode } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ProductBottomSheet } from '../components/ProductBottomSheet';
 import { WebSidebar } from '../components/WebSidebar';
 import { Colors } from '../constants/theme';
@@ -9,6 +11,15 @@ import { useWebLayout } from '../hooks/useWebLayout';
 import { useAuthStore } from '../store/useAuthStore';
 
 const AUTH_ONLY = ['/onboarding', '/login', '/otp'];
+
+function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <SafeAreaProvider>
+      {children}
+      <ProductBottomSheet />
+    </SafeAreaProvider>
+  );
+}
 
 export default function RootLayout() {
   const { isWeb, isDesktopWeb } = useWebLayout();
@@ -24,7 +35,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: Colors.cream },
+          contentStyle: { backgroundColor: Colors.cream, flex: 1 },
           animation: isWeb ? 'fade' : 'slide_from_right',
         }}
       >
@@ -48,29 +59,35 @@ export default function RootLayout() {
 
   if (showSidebar) {
     return (
-      <Root {...rootProps}>
-        <View style={styles.desktopShell}>
-          <WebSidebar />
-          <View style={styles.desktopMain}>{content}</View>
-        </View>
-      </Root>
+      <AppShell>
+        <Root {...rootProps}>
+          <View style={styles.desktopShell}>
+            <WebSidebar />
+            <View style={styles.desktopMain}>{content}</View>
+          </View>
+        </Root>
+      </AppShell>
     );
   }
 
   if (isWeb && isAuthScreen) {
     return (
-      <Root {...rootProps}>
-        <View style={styles.authShell}>
-          <View style={styles.authCard}>{content}</View>
-        </View>
-      </Root>
+      <AppShell>
+        <Root {...rootProps}>
+          <View style={styles.authShell}>
+            <View style={styles.authCard}>{content}</View>
+          </View>
+        </Root>
+      </AppShell>
     );
   }
 
   return (
-    <Root {...rootProps}>
-      <View style={isWeb ? styles.webRoot : styles.nativeRoot}>{content}</View>
-    </Root>
+    <AppShell>
+      <Root {...rootProps}>
+        <View style={isWeb ? styles.webRoot : styles.nativeRoot}>{content}</View>
+      </Root>
+    </AppShell>
   );
 }
 
@@ -79,17 +96,20 @@ const styles = StyleSheet.create({
   webRoot: {
     flex: 1,
     minHeight: '100vh' as unknown as number,
+    height: '100%' as unknown as number,
     backgroundColor: Colors.cream,
   },
   desktopShell: {
     flex: 1,
     flexDirection: 'row',
     minHeight: '100vh' as unknown as number,
+    height: '100%' as unknown as number,
     backgroundColor: Colors.cream,
   },
   desktopMain: {
     flex: 1,
-    overflow: 'hidden',
+    minHeight: 0,
+    minWidth: 0,
   },
   authShell: {
     flex: 1,

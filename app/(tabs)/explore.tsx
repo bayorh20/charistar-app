@@ -1,24 +1,25 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { ProductCard } from '../../components/ProductCard';
 import { CATEGORIES, PRODUCTS } from '../../constants/products';
 import { Colors, Radius, Spacing, Typography } from '../../constants/theme';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 export default function ExploreScreen() {
-  const insets = useSafeAreaInsets();
-  const { contentPaddingBottom, isDesktopWeb } = useWebLayout();
+  const { scrollPaddingBottom } = useScreenInsets();
+  const { isDesktopWeb } = useWebLayout();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Explore</Text>
       <Text style={styles.sub}>Discover everything Charistar has to offer.</Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: contentPaddingBottom }}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
+        style={styles.scroll}
       >
         {CATEGORIES.map((cat) => {
           const items = PRODUCTS.filter((p) => p.category === cat.id).slice(0, 2);
@@ -54,7 +55,8 @@ export default function ExploreScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1 },
   title: { ...Typography.hero, fontSize: 26, color: Colors.black, paddingHorizontal: Spacing.lg },
   sub: { ...Typography.body, color: Colors.gray, paddingHorizontal: Spacing.lg, marginBottom: Spacing.lg },
   block: { marginBottom: Spacing.lg },

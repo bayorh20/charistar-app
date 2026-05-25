@@ -1,16 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { Button } from '../../components/Button';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { useRewardsStore } from '../../store/useRewardsStore';
-import { useWebLayout } from '../../hooks/useWebLayout';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 
 export default function RewardsScreen() {
-  const insets = useSafeAreaInsets();
-  const { contentPaddingBottom } = useWebLayout();
+  const { scrollPaddingBottom } = useScreenInsets();
   const { points, referralCode, cashback, spin, spinPrize, redeemPoints } = useRewardsStore();
   const [spinning, setSpinning] = useState(false);
 
@@ -23,9 +21,12 @@ export default function RewardsScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Rewards</Text>
-      <ScrollView contentContainerStyle={{ paddingBottom: contentPaddingBottom }}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
+      >
         <View style={styles.pointsCard}>
           <Text style={styles.pointsLabel}>Your balance</Text>
           <Text style={styles.points}>{points}</Text>
@@ -82,7 +83,8 @@ export default function RewardsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1 },
   title: { ...Typography.hero, fontSize: 26, color: Colors.black, padding: Spacing.lg },
   pointsCard: {
     marginHorizontal: Spacing.lg,

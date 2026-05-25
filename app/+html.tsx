@@ -9,7 +9,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
         />
         <meta name="theme-color" content="#1B5E3B" />
         <meta
@@ -23,23 +23,29 @@ export default function Root({ children }: PropsWithChildren) {
           dangerouslySetInnerHTML={{
             __html: `
               html, body, #root {
-                height: 100%;
                 width: 100%;
                 margin: 0;
                 padding: 0;
                 background: #FAF8F3;
               }
+              html {
+                height: 100%;
+              }
               body {
+                min-height: 100%;
+                min-height: 100dvh;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
-                overflow: hidden;
+                overflow-x: hidden;
+                overflow-y: auto;
               }
               #root {
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
                 min-height: 100dvh;
+                flex: 1;
               }
               ::-webkit-scrollbar { width: 6px; height: 6px; }
               ::-webkit-scrollbar-track { background: transparent; }

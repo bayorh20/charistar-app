@@ -29,7 +29,7 @@ if not errorlevel 1 (
 
 echo.
 echo If gh failed, create a repo at https://github.com/new then run:
-echo   git remote add origin https://github.com/YOUR_USERNAME/charistar-app.git
+echo   git remote add origin https://github.com/bayorh20/charistar-app.git
 echo   git push -u origin main
 echo.
 set /p REPO_URL="Paste your repo URL (or press Enter to skip): "

@@ -79,7 +79,9 @@ const styles = StyleSheet.create({
     borderRightColor: Colors.softGreen,
     paddingVertical: Spacing.lg,
     paddingHorizontal: Spacing.md,
-    height: '100%',
+    height: '100%' as unknown as number,
+    minHeight: '100vh' as unknown as number,
+    flexShrink: 0,
   },
   brand: {
     flexDirection: 'row',

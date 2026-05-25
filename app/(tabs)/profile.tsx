@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useOrderStore } from '../../store/useOrderStore';
 import { useRewardsStore } from '../../store/useRewardsStore';
-import { useWebLayout } from '../../hooks/useWebLayout';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 
 const MENU = [
   { icon: 'location-outline', label: 'Saved Addresses', route: '/delivery-window' },
@@ -19,8 +18,7 @@ const MENU = [
 ];
 
 export default function ProfileScreen() {
-  const insets = useSafeAreaInsets();
-  const { contentPaddingBottom } = useWebLayout();
+  const { scrollPaddingBottom } = useScreenInsets();
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const orders = useOrderStore((s) => s.orders);
@@ -32,8 +30,11 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScrollView contentContainerStyle={{ paddingBottom: contentPaddingBottom }}>
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
+      >
         <View style={styles.header}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>
@@ -84,7 +85,8 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1 },
   header: {
     alignItems: 'center',
     paddingVertical: Spacing.xl,

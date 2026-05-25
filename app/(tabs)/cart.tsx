@@ -3,16 +3,15 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { Button } from '../../components/Button';
 import { formatPrice } from '../../constants/products';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { useCartStore } from '../../store/useCartStore';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 export default function CartScreen() {
-  const insets = useSafeAreaInsets();
   const items = useCartStore((s) => s.items);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -22,7 +21,8 @@ export default function CartScreen() {
   const deliveryFee = useCartStore((s) => s.deliveryFee);
   const subtotal = useCartStore((s) => s.subtotal);
   const total = useCartStore((s) => s.total);
-  const { contentPaddingBottom, isDesktopWeb } = useWebLayout();
+  const { paddingTop, scrollPaddingBottom, safeBottom } = useScreenInsets();
+  const { isDesktopWeb } = useWebLayout();
   const [code, setCode] = useState('');
   const [codeMsg, setCodeMsg] = useState('');
 
@@ -33,7 +33,7 @@ export default function CartScreen() {
 
   if (!items.length) {
     return (
-      <View style={[styles.empty, { paddingTop: insets.top + 80 }]}>
+      <View style={[styles.empty, { paddingTop: paddingTop + 40, paddingBottom: scrollPaddingBottom }]}>
         <Ionicons name="bag-outline" size={64} color={Colors.softGreenMuted} />
         <Text style={styles.emptyTitle}>Your cart is empty</Text>
         <Text style={styles.emptySub}>What are you craving today?</Text>
@@ -43,11 +43,12 @@ export default function CartScreen() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       <Text style={styles.title}>Your Cart</Text>
       <ScrollView
+        style={styles.scroll}
         contentContainerStyle={[
-          { paddingBottom: contentPaddingBottom + 80 },
+          { paddingBottom: scrollPaddingBottom },
           isDesktopWeb && styles.desktopContent,
         ]}
       >
@@ -115,7 +116,7 @@ export default function CartScreen() {
         style={[
           styles.footer,
           isDesktopWeb && styles.footerDesktop,
-          { paddingBottom: isDesktopWeb ? 24 : insets.bottom + 100 },
+          { paddingBottom: isDesktopWeb ? 24 : safeBottom + 16 },
         ]}
       >
         <Button title="Checkout" onPress={() => router.push('/checkout')} />
@@ -146,7 +147,8 @@ function Row({
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1 },
   title: { ...Typography.hero, fontSize: 24, color: Colors.black, padding: Spacing.lg },
   empty: { flex: 1, backgroundColor: Colors.cream, alignItems: 'center', paddingHorizontal: Spacing.xl },
   emptyTitle: { ...Typography.title, color: Colors.black, marginTop: Spacing.lg },

@@ -99,6 +99,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: Spacing.lg,
+    zIndex: 100,
+    elevation: 100,
+    pointerEvents: 'box-none' as const,
   },
   bar: {
     flexDirection: 'row',

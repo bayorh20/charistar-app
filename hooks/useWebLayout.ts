@@ -1,5 +1,5 @@
 import { Platform, useWindowDimensions } from 'react-native';
-import { BREAKPOINTS } from '../constants/layout';
+import { BREAKPOINTS, FLOATING_TAB_BAR_HEIGHT } from '../constants/layout';
 
 export function useWebLayout() {
   const { width, height } = useWindowDimensions();
@@ -16,6 +16,6 @@ export function useWebLayout() {
     width,
     height,
     columns,
-    contentPaddingBottom: isDesktopWeb ? 48 : 120,
+    contentPaddingBottom: isDesktopWeb ? 32 : FLOATING_TAB_BAR_HEIGHT + 32,
   };
 }
