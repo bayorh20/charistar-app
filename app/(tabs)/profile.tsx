@@ -18,7 +18,7 @@ const MENU = [
 ];
 
 export default function ProfileScreen() {
-  const { scrollPaddingBottom } = useScreenInsets();
+  const { scrollPaddingBottom } = useScreenInsets({ tabBar: true });
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   const orders = useOrderStore((s) => s.orders);

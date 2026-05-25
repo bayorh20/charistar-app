@@ -36,7 +36,7 @@ const SECTIONS: { key: ProductSection; title: string; href: string }[] = [
 ];
 
 export default function HomeScreen() {
-  const { scrollPaddingBottom } = useScreenInsets();
+  const { scrollPaddingBottom } = useScreenInsets({ tabBar: true });
   const { isDesktopWeb, isTabletWeb } = useWebLayout();
   const user = useAuthStore((s) => s.user);
   const points = useRewardsStore((s) => s.points);

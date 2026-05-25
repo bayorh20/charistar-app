@@ -9,7 +9,7 @@ import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 export default function ExploreScreen() {
-  const { scrollPaddingBottom } = useScreenInsets();
+  const { scrollPaddingBottom } = useScreenInsets({ tabBar: true });
   const { isDesktopWeb } = useWebLayout();
 
   return (

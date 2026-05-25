@@ -8,7 +8,7 @@ import { useRewardsStore } from '../../store/useRewardsStore';
 import { useScreenInsets } from '../../hooks/useScreenInsets';
 
 export default function RewardsScreen() {
-  const { scrollPaddingBottom } = useScreenInsets();
+  const { scrollPaddingBottom } = useScreenInsets({ tabBar: true });
   const { points, referralCode, cashback, spin, spinPrize, redeemPoints } = useRewardsStore();
   const [spinning, setSpinning] = useState(false);
 

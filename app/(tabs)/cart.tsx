@@ -21,7 +21,7 @@ export default function CartScreen() {
   const deliveryFee = useCartStore((s) => s.deliveryFee);
   const subtotal = useCartStore((s) => s.subtotal);
   const total = useCartStore((s) => s.total);
-  const { paddingTop, scrollPaddingBottom, safeBottom } = useScreenInsets();
+  const { scrollPaddingBottom, paddingBottom } = useScreenInsets({ tabBar: true });
   const { isDesktopWeb } = useWebLayout();
   const [code, setCode] = useState('');
   const [codeMsg, setCodeMsg] = useState('');
@@ -33,7 +33,7 @@ export default function CartScreen() {
 
   if (!items.length) {
     return (
-      <View style={[styles.empty, { paddingTop: paddingTop + 40, paddingBottom: scrollPaddingBottom }]}>
+      <View style={[styles.empty, { paddingBottom: scrollPaddingBottom }]}>
         <Ionicons name="bag-outline" size={64} color={Colors.softGreenMuted} />
         <Text style={styles.emptyTitle}>Your cart is empty</Text>
         <Text style={styles.emptySub}>What are you craving today?</Text>
@@ -47,8 +47,9 @@ export default function CartScreen() {
       <Text style={styles.title}>Your Cart</Text>
       <ScrollView
         style={styles.scroll}
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          { paddingBottom: scrollPaddingBottom },
+          styles.scrollContent,
           isDesktopWeb && styles.desktopContent,
         ]}
       >
@@ -116,7 +117,7 @@ export default function CartScreen() {
         style={[
           styles.footer,
           isDesktopWeb && styles.footerDesktop,
-          { paddingBottom: isDesktopWeb ? 24 : safeBottom + 16 },
+          { paddingBottom: isDesktopWeb ? 24 : paddingBottom },
         ]}
       >
         <Button title="Checkout" onPress={() => router.push('/checkout')} />
@@ -148,9 +149,17 @@ function Row({
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
-  scroll: { flex: 1 },
+  scroll: { flex: 1, minHeight: 0 },
+  scrollContent: { paddingBottom: Spacing.md },
   title: { ...Typography.hero, fontSize: 24, color: Colors.black, padding: Spacing.lg },
-  empty: { flex: 1, backgroundColor: Colors.cream, alignItems: 'center', paddingHorizontal: Spacing.xl },
+  empty: {
+    flex: 1,
+    backgroundColor: Colors.cream,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+    minHeight: 0,
+  },
   emptyTitle: { ...Typography.title, color: Colors.black, marginTop: Spacing.lg },
   emptySub: { ...Typography.body, color: Colors.gray, marginTop: 4 },
   item: {
@@ -215,13 +224,17 @@ const styles = StyleSheet.create({
   rowValue: { ...Typography.body, color: Colors.black },
   bold: { fontWeight: '600', fontSize: 16, color: Colors.black },
   divider: { height: 1, backgroundColor: Colors.softGreen, marginVertical: 8 },
-  footer: { paddingHorizontal: Spacing.lg },
-  footerDesktop: {
-    position: 'relative',
+  footer: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.softGreen,
-    paddingTop: Spacing.md,
     backgroundColor: Colors.cream,
+  },
+  footerDesktop: {
+    maxWidth: 900,
+    alignSelf: 'center',
+    width: '100%',
   },
   desktopContent: { maxWidth: 900, alignSelf: 'center', width: '100%' },
 });

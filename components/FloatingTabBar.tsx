@@ -4,10 +4,16 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
+import {
+  TAB_BAR_CART_LIFT,
+  TAB_BAR_CART_SIZE,
+  TAB_BAR_HEIGHT,
+} from '../constants/layout';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../constants/theme';
 import { useCartStore } from '../store/useCartStore';
 import { AnimatedPressable } from './AnimatedPressable';
@@ -33,43 +39,68 @@ interface Props {
 export function FloatingTabBar({ state, navigation }: Props) {
   const insets = useSafeAreaInsets();
   const count = useCartStore((s) => s.itemCount());
-  const pulse = useSharedValue(1);
+  const badgeScale = useSharedValue(1);
+  const cartScale = useSharedValue(1);
+
+  const activeRoute = state.routes[state.index]?.name;
+  const cartFocused = activeRoute === 'cart';
 
   useEffect(() => {
     if (count > 0) {
-      pulse.value = withSequence(
-        withTiming(1.15, { duration: 120 }),
-        withTiming(1, { duration: 120 })
+      badgeScale.value = withSequence(
+        withTiming(1.2, { duration: 140 }),
+        withSpring(1, { damping: 12, stiffness: 200 })
+      );
+      cartScale.value = withSequence(
+        withTiming(1.06, { duration: 120 }),
+        withSpring(1, { damping: 14, stiffness: 220 })
       );
     }
   }, [count]);
 
-  const badgeStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
+  const badgeAnim = useAnimatedStyle(() => ({
+    transform: [{ scale: badgeScale.value }],
+  }));
+
+  const cartAnim = useAnimatedStyle(() => ({
+    transform: [{ scale: cartScale.value }],
   }));
 
   return (
-    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+    <View
+      style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, 10) }]}
+      pointerEvents="box-none"
+    >
+      {/* Elevated cart button — sits above the pill, centered */}
+      <View style={styles.fabLayer} pointerEvents="box-none">
+        <Animated.View style={[styles.fabOuter, cartAnim]}>
+          <AnimatedPressable
+            style={[styles.fab, cartFocused && styles.fabFocused]}
+            onPress={() => navigation.navigate('cart')}
+            haptic
+          >
+            <Ionicons
+              name={cartFocused ? 'bag' : 'bag-outline'}
+              size={26}
+              color={Colors.white}
+            />
+            {count > 0 && (
+              <Animated.View style={[styles.badge, badgeAnim]}>
+                <Text style={styles.badgeText}>{count > 9 ? '9+' : count}</Text>
+              </Animated.View>
+            )}
+          </AnimatedPressable>
+        </Animated.View>
+      </View>
+
+      {/* Pill navigation bar */}
       <View style={styles.bar}>
         {state.routes.map((route: TabRoute, index: number) => {
           const tab = TABS.find((t) => t.name === route.name) ?? TABS[0];
           const focused = state.index === index;
 
           if (tab.center) {
-            return (
-              <AnimatedPressable
-                key={route.key}
-                style={styles.centerBtn}
-                onPress={() => navigation.navigate(route.name)}
-              >
-                <Ionicons name={focused ? 'bag' : 'bag-outline'} size={24} color={Colors.white} />
-                {count > 0 && (
-                  <Animated.View style={[styles.badge, badgeStyle]}>
-                    <Text style={styles.badgeText}>{count > 9 ? '9+' : count}</Text>
-                  </Animated.View>
-                )}
-              </AnimatedPressable>
-            );
+            return <View key={route.key} style={styles.centerSlot} />;
           }
 
           return (
@@ -92,51 +123,94 @@ export function FloatingTabBar({ state, navigation }: Props) {
   );
 }
 
+const FAB_TOP = -(TAB_BAR_CART_LIFT + TAB_BAR_CART_SIZE / 2 - TAB_BAR_HEIGHT / 2);
+
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
+    position: 'absolute',
+    left: Spacing.lg,
+    right: Spacing.lg,
+    bottom: 0,
+    zIndex: 200,
+    elevation: 200,
+    overflow: 'visible',
+  },
+  fabLayer: {
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 0,
-    paddingHorizontal: Spacing.lg,
-    zIndex: 100,
-    elevation: 100,
-    pointerEvents: 'box-none' as const,
+    top: FAB_TOP,
+    alignItems: 'center',
+    zIndex: 201,
+    overflow: 'visible',
+  },
+  fabOuter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fab: {
+    width: TAB_BAR_CART_SIZE,
+    height: TAB_BAR_CART_SIZE,
+    borderRadius: TAB_BAR_CART_SIZE / 2,
+    backgroundColor: Colors.deepGreen,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: Colors.white,
+    ...Shadow.soft,
+  },
+  fabFocused: {
+    backgroundColor: Colors.deepGreenDark,
+    borderColor: Colors.lemon,
+  },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: Colors.lemon,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 5,
+    borderWidth: 2,
+    borderColor: Colors.white,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: Colors.deepGreen,
   },
   bar: {
     flexDirection: 'row',
     alignItems: 'center',
+    height: TAB_BAR_HEIGHT,
     backgroundColor: Colors.white,
     borderRadius: Radius.xl,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
+    overflow: 'visible',
     ...Shadow.soft,
   },
-  tab: { flex: 1, alignItems: 'center', gap: 2 },
-  label: { ...Typography.micro, color: Colors.grayLight },
-  labelActive: { color: Colors.deepGreen },
-  centerBtn: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.deepGreen,
+  centerSlot: {
+    flex: 1,
+    minWidth: 76,
+    maxWidth: 88,
+  },
+  tab: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -28,
-    marginHorizontal: 4,
-    ...Shadow.soft,
+    gap: 3,
+    paddingVertical: 8,
   },
-  badge: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: Colors.lemon,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
+  label: {
+    ...Typography.micro,
+    color: Colors.grayLight,
+    fontSize: 10,
   },
-  badgeText: { fontSize: 9, fontWeight: '700', color: Colors.deepGreen },
+  labelActive: {
+    color: Colors.deepGreen,
+    fontWeight: '600',
+  },
 });

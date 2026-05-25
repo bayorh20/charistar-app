@@ -3,19 +3,19 @@ import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { Button } from '../../components/Button';
 import { ADD_ONS, formatPrice, getProduct } from '../../constants/products';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { buildCartFromProduct, useCartStore } from '../../store/useCartStore';
 import { useRewardsStore } from '../../store/useRewardsStore';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const product = getProduct(id ?? '');
-  const insets = useSafeAreaInsets();
+  const { paddingTop, safeBottom } = useScreenInsets();
   const { isDesktopWeb } = useWebLayout();
   const addItem = useCartStore((s) => s.addItem);
   const addPoints = useRewardsStore((s) => s.addPoints);
@@ -57,9 +57,10 @@ export default function ProductDetailScreen() {
   return (
     <View style={styles.container}>
       <ScrollView
+        style={styles.scroll}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          { paddingBottom: isDesktopWeb ? 100 : 140 },
+          { paddingBottom: Spacing.md },
           isDesktopWeb && styles.scrollDesktop,
         ]}
       >
@@ -67,7 +68,7 @@ export default function ProductDetailScreen() {
           <View style={[styles.imageWrap, isDesktopWeb && styles.imageWrapDesktop]}>
             <Image source={{ uri: product.image }} style={styles.image} contentFit="cover" />
             <AnimatedPressable
-              style={[styles.back, { top: isDesktopWeb ? 16 : insets.top + 8 }]}
+              style={[styles.back, { top: isDesktopWeb ? 16 : paddingTop + 8 }]}
               onPress={() => router.back()}
             >
               <Ionicons name="arrow-back" size={22} color={Colors.black} />
@@ -147,7 +148,7 @@ export default function ProductDetailScreen() {
         style={[
           styles.footer,
           isDesktopWeb && styles.footerDesktop,
-          { paddingBottom: isDesktopWeb ? 24 : insets.bottom + 16 },
+          { paddingBottom: isDesktopWeb ? 24 : safeBottom + 16 },
         ]}
       >
         <Button title="Add to Cart" variant="outline" onPress={() => addToCart(false)} style={{ flex: 1 }} />
@@ -158,7 +159,8 @@ export default function ProductDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1, minHeight: 0 },
   missing: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
   scrollDesktop: { paddingHorizontal: 24 },
   topSection: {},
@@ -221,10 +223,6 @@ const styles = StyleSheet.create({
   benefit: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
   benefitText: { ...Typography.body, color: Colors.black },
   footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
     flexDirection: 'row',
     gap: 12,
     paddingHorizontal: Spacing.lg,

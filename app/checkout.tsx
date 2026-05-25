@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../components/AnimatedPressable';
 import { Button } from '../components/Button';
 import { formatPrice } from '../constants/products';
@@ -10,11 +9,12 @@ import { Colors, Radius, Shadow, Spacing, Typography } from '../constants/theme'
 import { useCartStore } from '../store/useCartStore';
 import { useOrderStore } from '../store/useOrderStore';
 import { useRewardsStore } from '../store/useRewardsStore';
+import { useScreenInsets } from '../hooks/useScreenInsets';
 
 const PAYMENTS = ['Paystack', 'Card', 'Bank Transfer', 'Wallet'];
 
 export default function CheckoutScreen() {
-  const insets = useSafeAreaInsets();
+  const { paddingTop, safeBottom } = useScreenInsets();
   const items = useCartStore((s) => s.items);
   const total = useCartStore((s) => s.total);
   const clearCart = useCartStore((s) => s.clearCart);
@@ -50,7 +50,7 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
         <AnimatedPressable onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={22} color={Colors.black} />
@@ -59,7 +59,11 @@ export default function CheckoutScreen() {
         <View style={{ width: 22 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Spacing.md }}
+      >
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Delivery Address</Text>
           <Text style={styles.cardValue}>University of Lagos, Akoka</Text>
@@ -113,7 +117,7 @@ export default function CheckoutScreen() {
         )}
       </ScrollView>
 
-      <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+      <View style={[styles.footer, { paddingBottom: safeBottom + 16 }]}>
         <Button title="Place Order" onPress={place} loading={loading} />
       </View>
     </View>
@@ -121,7 +125,8 @@ export default function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
+  scroll: { flex: 1, minHeight: 0 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -192,5 +197,11 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   paystackText: { ...Typography.caption, color: Colors.gray },
-  footer: { paddingHorizontal: Spacing.lg },
+  footer: {
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.softGreen,
+    backgroundColor: Colors.cream,
+  },
 });

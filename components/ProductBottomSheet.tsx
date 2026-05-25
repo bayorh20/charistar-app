@@ -129,7 +129,6 @@ export function ProductBottomSheet() {
                 maxWidth: isDesktopWeb ? 480 : screenW,
                 alignSelf: 'center',
                 width: isDesktopWeb ? 480 : '100%',
-                paddingBottom: insets.bottom + Spacing.md,
               },
             ]}
           >
@@ -138,6 +137,7 @@ export function ProductBottomSheet() {
             </View>
 
             <ScrollView
+              style={styles.scrollView}
               showsVerticalScrollIndicator={false}
               bounces={false}
               contentContainerStyle={styles.scroll}
@@ -224,7 +224,7 @@ export function ProductBottomSheet() {
               </AnimatedPressable>
             </ScrollView>
 
-            <View style={styles.footer}>
+            <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
               <Button title="Add to Cart" onPress={handleAdd} />
             </View>
           </Animated.View>
@@ -249,8 +249,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: Radius.xl,
     borderTopRightRadius: Radius.xl,
     overflow: 'hidden',
+    flexDirection: 'column',
     ...Shadow.soft,
   },
+  scrollView: { flex: 1, minHeight: 0 },
   handleWrap: { alignItems: 'center', paddingTop: 10, paddingBottom: 4 },
   handle: {
     width: 40,

@@ -1,22 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { ProductCard } from '../../components/ProductCard';
 import { CATEGORIES, CategoryId, getProductsByCategory } from '../../constants/products';
 import { Colors, Spacing, Typography } from '../../constants/theme';
+import { useScreenInsets } from '../../hooks/useScreenInsets';
 import { useWebLayout } from '../../hooks/useWebLayout';
 
 export default function ProductListingScreen() {
   const { category } = useLocalSearchParams<{ category: string }>();
-  const insets = useSafeAreaInsets();
+  const { paddingTop, scrollPaddingBottom } = useScreenInsets();
   const { columns, isDesktopWeb } = useWebLayout();
   const cat = CATEGORIES.find((c) => c.id === category);
   const products = getProductsByCategory((category as CategoryId) || 'yogurts');
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop }]}>
       <View style={styles.header}>
         <AnimatedPressable onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={22} color={Colors.black} />
@@ -28,7 +28,7 @@ export default function ProductListingScreen() {
         data={products}
         numColumns={columns}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={[styles.list, { paddingBottom: scrollPaddingBottom }]}
         columnWrapperStyle={columns > 1 ? styles.row : undefined}
         renderItem={({ item }) => (
           <View style={[styles.cell, isDesktopWeb && styles.cellDesktop]}>
@@ -44,7 +44,7 @@ export default function ProductListingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
   title: { ...Typography.title, color: Colors.black },
-  list: { paddingHorizontal: Spacing.lg - 8, paddingBottom: 40 },
+  list: { paddingHorizontal: Spacing.lg - 8, paddingBottom: 40, flexGrow: 1 },
   row: { justifyContent: 'space-between' },
   cell: { flex: 1, marginHorizontal: 4 },
   cellDesktop: { maxWidth: 280 },
