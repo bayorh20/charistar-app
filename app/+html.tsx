@@ -9,7 +9,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover"
+          content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
         />
         <meta name="theme-color" content="#1B5E3B" />
         <meta
@@ -26,26 +26,28 @@ export default function Root({ children }: PropsWithChildren) {
                 width: 100%;
                 margin: 0;
                 padding: 0;
-                background: #FAF8F3;
+                background: #E8F3EC;
               }
               html {
                 height: 100%;
+                height: 100dvh;
               }
               body {
-                min-height: 100%;
-                min-height: 100dvh;
+                height: 100%;
+                height: 100dvh;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
-                overflow-x: hidden;
-                overflow-y: auto;
+                overflow: hidden;
+                overscroll-behavior: none;
               }
               #root {
                 display: flex;
                 flex-direction: column;
-                min-height: 100vh;
-                min-height: 100dvh;
-                flex: 1;
+                height: 100%;
+                height: 100dvh;
+                min-height: 0;
+                overflow: hidden;
               }
               ::-webkit-scrollbar { width: 6px; height: 6px; }
               ::-webkit-scrollbar-track { background: transparent; }
@@ -54,6 +56,7 @@ export default function Root({ children }: PropsWithChildren) {
               * { box-sizing: border-box; }
               input, textarea, button { font-family: inherit; }
               a { -webkit-tap-highlight-color: transparent; }
+              img { max-width: 100%; height: auto; }
             `,
           }}
         />

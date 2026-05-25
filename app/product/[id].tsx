@@ -165,8 +165,19 @@ const styles = StyleSheet.create({
   scrollDesktop: { paddingHorizontal: 24 },
   topSection: {},
   topSectionDesktop: { flexDirection: 'row', gap: 32, maxWidth: 1100, alignSelf: 'center', width: '100%' },
-  imageWrap: { height: 320, backgroundColor: Colors.softGreen },
-  imageWrapDesktop: { flex: 1, height: 420, borderRadius: Radius.xl, overflow: 'hidden' },
+  imageWrap: {
+    width: '100%',
+    aspectRatio: 4 / 5,
+    maxHeight: 360,
+    backgroundColor: Colors.softGreen,
+  },
+  imageWrapDesktop: {
+    flex: 1,
+    aspectRatio: 4 / 5,
+    maxHeight: 480,
+    borderRadius: Radius.xl,
+    overflow: 'hidden',
+  },
   image: { width: '100%', height: '100%' },
   back: {
     position: 'absolute',

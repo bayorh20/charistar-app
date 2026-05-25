@@ -4,7 +4,9 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { CartToast } from '../components/CartToast';
 import { ProductBottomSheet } from '../components/ProductBottomSheet';
+import { WebAppFrame } from '../components/WebAppFrame';
 import { WebSidebar } from '../components/WebSidebar';
 import { Colors } from '../constants/theme';
 import { useWebLayout } from '../hooks/useWebLayout';
@@ -15,8 +17,11 @@ const AUTH_ONLY = ['/onboarding', '/login', '/otp'];
 function AppShell({ children }: { children: ReactNode }) {
   return (
     <SafeAreaProvider>
-      {children}
-      <ProductBottomSheet />
+      <GestureHandlerRootView style={styles.gestureRoot}>
+        {children}
+        <ProductBottomSheet />
+        <CartToast />
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }
@@ -73,11 +78,25 @@ export default function RootLayout() {
   if (isWeb && isAuthScreen) {
     return (
       <AppShell>
-        <Root {...rootProps}>
-          <View style={styles.authShell}>
-            <View style={styles.authCard}>{content}</View>
-          </View>
-        </Root>
+        <WebAppFrame>
+          <Root {...rootProps}>
+            <View style={styles.authShell}>
+              <View style={styles.authCard}>{content}</View>
+            </View>
+          </Root>
+        </WebAppFrame>
+      </AppShell>
+    );
+  }
+
+  if (isWeb) {
+    return (
+      <AppShell>
+        <WebAppFrame>
+          <Root {...rootProps}>
+            <View style={styles.webRoot}>{content}</View>
+          </Root>
+        </WebAppFrame>
       </AppShell>
     );
   }
@@ -85,25 +104,28 @@ export default function RootLayout() {
   return (
     <AppShell>
       <Root {...rootProps}>
-        <View style={isWeb ? styles.webRoot : styles.nativeRoot}>{content}</View>
+        <View style={styles.nativeRoot}>{content}</View>
       </Root>
     </AppShell>
   );
 }
 
 const styles = StyleSheet.create({
+  gestureRoot: { flex: 1, minHeight: 0 },
   nativeRoot: { flex: 1 },
   webRoot: {
     flex: 1,
-    minHeight: '100vh' as unknown as number,
-    height: '100%' as unknown as number,
+    width: '100%',
+    height: '100%',
+    minHeight: 0,
     backgroundColor: Colors.cream,
   },
   desktopShell: {
     flex: 1,
     flexDirection: 'row',
-    minHeight: '100vh' as unknown as number,
-    height: '100%' as unknown as number,
+    width: '100%',
+    height: '100%',
+    minHeight: 0,
     backgroundColor: Colors.cream,
   },
   desktopMain: {
@@ -113,7 +135,9 @@ const styles = StyleSheet.create({
   },
   authShell: {
     flex: 1,
-    minHeight: '100vh' as unknown as number,
+    width: '100%',
+    height: '100%',
+    minHeight: 0,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.cream,
@@ -123,6 +147,7 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 480,
     flex: 1,
-    maxHeight: 900,
+    maxHeight: '100%',
+    minHeight: 0,
   },
 });

@@ -21,6 +21,7 @@ import { AnimatedPressable } from '../../components/AnimatedPressable';
 import { ProductCard } from '../../components/ProductCard';
 import { SectionHeader } from '../../components/SectionHeader';
 import { CATEGORIES, getProductsBySection, ProductSection } from '../../constants/products';
+import { HERO_ASPECT, HERO_ASPECT_DESKTOP } from '../../constants/layout';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../../constants/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useRewardsStore } from '../../store/useRewardsStore';
@@ -222,7 +223,8 @@ const styles = StyleSheet.create({
   },
   search: { flex: 1, paddingVertical: 14, ...Typography.body, color: Colors.black },
   hero: {
-    height: 200,
+    alignSelf: 'stretch',
+    aspectRatio: HERO_ASPECT,
     marginHorizontal: Spacing.lg,
     borderRadius: Radius.xl,
     overflow: 'hidden',
@@ -267,5 +269,5 @@ const styles = StyleSheet.create({
   gridItemTablet: { width: '31%' },
   gridItemDesktop: { width: '23%' },
   gridDesktop: { gap: 16 },
-  heroDesktop: { height: 280 },
+  heroDesktop: { aspectRatio: HERO_ASPECT_DESKTOP },
 });

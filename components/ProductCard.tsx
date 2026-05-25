@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { formatPrice, Product } from '../constants/products';
+import { PRODUCT_IMAGE_ASPECT } from '../constants/layout';
 import { Colors, Radius, Shadow, Spacing, Typography } from '../constants/theme';
 import { useCartStore } from '../store/useCartStore';
 import { useProductSheetStore } from '../store/useProductSheetStore';
@@ -54,7 +55,13 @@ export function ProductCard({ product, width }: Props) {
         <Text style={styles.price}>{formatPrice(product.price)}</Text>
         <AnimatedPressable
           style={styles.addBtn}
-          onPress={() => openSheet(product)}
+          accessibilityLabel={`Quick add ${product.name}`}
+          onPress={(e) => {
+            if (Platform.OS === 'web' && e?.stopPropagation) {
+              e.stopPropagation();
+            }
+            openSheet(product);
+          }}
         >
           <Ionicons name="add" size={18} color={Colors.white} />
         </AnimatedPressable>
@@ -74,7 +81,8 @@ const styles = StyleSheet.create({
   },
   tapArea: { flex: 1 },
   imageWrap: {
-    height: 140,
+    width: '100%',
+    aspectRatio: PRODUCT_IMAGE_ASPECT,
     borderRadius: Radius.md,
     overflow: 'hidden',
     marginBottom: Spacing.sm,

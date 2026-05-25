@@ -10,13 +10,14 @@ interface Props extends PropsWithChildren {
 }
 
 export function PageContainer({ children, style, noPadding }: Props) {
-  const { isWeb, isDesktopWeb } = useWebLayout();
+  const { isWeb, isDesktopWeb, inPhoneFrame, contentWidth } = useWebLayout();
 
   return (
     <View
       style={[
         styles.wrap,
-        isWeb && styles.webWrap,
+        isWeb && !inPhoneFrame && styles.webWrap,
+        isWeb && inPhoneFrame && { width: contentWidth, alignSelf: 'center' },
         isDesktopWeb && styles.desktopWrap,
         !noPadding && isDesktopWeb && styles.desktopPad,
         style,

@@ -3,12 +3,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -16,8 +16,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../components/Button';
 import { Colors, Radius, Spacing, Typography } from '../constants/theme';
 import { useAuthStore } from '../store/useAuthStore';
-
-const { width } = Dimensions.get('window');
 
 const SLIDES = [
   {
@@ -39,12 +37,16 @@ const SLIDES = [
 
 export default function OnboardingScreen() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const listRef = useRef<FlatList>(null);
   const setOnboarded = useAuthStore((s) => s.setOnboarded);
 
+  const slideWidth = width;
+  const imageHeight = slideWidth * 0.75;
+
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = Math.round(e.nativeEvent.contentOffset.x / width);
+    const i = Math.round(e.nativeEvent.contentOffset.x / slideWidth);
     setIndex(i);
   };
 
@@ -72,8 +74,8 @@ export default function OnboardingScreen() {
         onScroll={onScroll}
         keyExtractor={(_, i) => String(i)}
         renderItem={({ item }) => (
-          <View style={{ width }}>
-            <View style={styles.imageCard}>
+          <View style={{ width: slideWidth }}>
+            <View style={[styles.imageCard, { height: imageHeight }]}>
               <Image source={{ uri: item.image }} style={styles.image} contentFit="cover" />
               <LinearGradient
                 colors={['transparent', Colors.cream]}
@@ -106,13 +108,13 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.cream },
+  container: { flex: 1, backgroundColor: Colors.cream, minHeight: 0 },
   imageCard: {
-    height: width * 0.85,
     marginHorizontal: Spacing.lg,
     borderRadius: Radius.xl,
     overflow: 'hidden',
     marginTop: Spacing.md,
+    backgroundColor: Colors.softGreen,
   },
   image: { width: '100%', height: '100%' },
   imageGradient: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 120 },

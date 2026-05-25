@@ -10,6 +10,20 @@ export const WEB = {
   authMaxWidth: 480,
 };
 
+/** Portrait phone frame for centered web preview (width × height ratio). */
+export const APP_FRAME = {
+  maxWidth: 430,
+  /** width / height — e.g. 9:19.5 iPhone-like portrait */
+  aspectRatio: 9 / 19.5,
+};
+
+/** Product card image width / height */
+export const PRODUCT_IMAGE_ASPECT = 4 / 5;
+
+/** Home hero banner width / height */
+export const HERO_ASPECT = 16 / 9;
+export const HERO_ASPECT_DESKTOP = 21 / 9;
+
 /** White pill bar height */
 export const TAB_BAR_HEIGHT = 64;
 
