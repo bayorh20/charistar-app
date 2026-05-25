@@ -20,11 +20,15 @@ Open **http://localhost:4000**
 
 1. Push this repo to GitHub
 2. Go to [vercel.com/new](https://vercel.com/new)
-3. Import the repository
-4. Vercel auto-detects settings from `vercel.json`:
+3. Import **bayorh20/charistar-app**
+4. Confirm project settings (must match exactly):
+   - **Root Directory:** leave empty (`.`)
    - **Build command:** `npm run build:web`
    - **Output directory:** `dist`
+   - **Framework Preset:** Other
 5. Click **Deploy**
+
+If you see `404: NOT_FOUND`, open Project Settings → General → Root Directory (should be blank) and Build & Development → Output Directory = `dist`, then redeploy.
 
 Or with CLI:
 
